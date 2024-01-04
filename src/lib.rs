@@ -5,17 +5,17 @@ pub struct Tfd {
 }
 
 impl Tfd {
-    pub fn new(format_occupancy: usize) -> Tfd {
+    pub fn new(format_occupancy: usize,log_level:&str) -> Tfd {
         let tfd = Tfd { format_occupancy };
-        tfd.init_dev();
+        tfd.init_dev(log_level);
         tfd
     }
 
-    fn init_dev(&self) {
+    fn init_dev(&self,log_level:&str) {
         tracing_subscriber::fmt()
             .without_time()
             .with_target(false)
-            .with_env_filter(EnvFilter::from_default_env())
+            .with_env_filter(EnvFilter::new(log_level))
             .init();
     }
 
