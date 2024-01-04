@@ -1,13 +1,29 @@
 use tracing_subscriber::EnvFilter;
 
+
+pub enum TfdLogLevel {
+    Info,
+    Debug,
+}
+
+impl TfdLogLevel {
+    pub fn as_str(&self) -> &str {
+        match self {
+            TfdLogLevel::Info => "info",
+            TfdLogLevel::Debug => "debug",
+        }
+    }
+}
+
+
 pub struct Tfd {
     format_occupancy: usize,
 }
 
 impl Tfd {
-    pub fn new(format_occupancy: usize,log_level:&str) -> Tfd {
+    pub fn new(format_occupancy: usize,log_level:&TfdLogLevel) -> Tfd {
         let tfd = Tfd { format_occupancy };
-        tfd.init_dev(log_level);
+        tfd.init_dev(log_level.as_str());
         tfd
     }
 

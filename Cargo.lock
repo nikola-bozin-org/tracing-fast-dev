@@ -204,7 +204,7 @@ dependencies = [
 
 [[package]]
 name = "tracing-fast-dev"
-version = "0.0.3"
+version = "0.1.0"
 dependencies = [
  "tracing",
  "tracing-subscriber",
