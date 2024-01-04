@@ -1,38 +1,26 @@
-use tracing_subscriber::EnvFilter;
-
-
-pub enum TfdLogLevel {
-    Info,
-    Debug,
-}
-
-impl TfdLogLevel {
-    pub fn as_str(&self) -> &str {
-        match self {
-            TfdLogLevel::Info => "info",
-            TfdLogLevel::Debug => "debug",
-        }
-    }
-}
-
+use tracing::Level;
+use tracing_subscriber::FmtSubscriber;
 
 pub struct Tfd {
     format_occupancy: usize,
 }
 
 impl Tfd {
-    pub fn new(format_occupancy: usize,log_level:&TfdLogLevel) -> Tfd {
+    pub fn new(format_occupancy: usize) -> Tfd {
         let tfd = Tfd { format_occupancy };
-        tfd.init_dev(log_level.as_str());
+        tfd.init_dev();
         tfd
     }
 
-    fn init_dev(&self,log_level:&str) {
-        tracing_subscriber::fmt()
+    fn init_dev(&self) {
+        let subscriber = FmtSubscriber::builder()
+            .with_max_level(Level::TRACE)
             .without_time()
             .with_target(false)
-            .with_env_filter(EnvFilter::new(log_level))
-            .init();
+            .finish();
+
+        tracing::subscriber::set_global_default(subscriber)
+            .expect("setting default subscriber failed");
     }
 
     pub fn info(&self, func_identifier: &str, token: &str) {
