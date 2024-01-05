@@ -1,13 +1,24 @@
+use std::sync::OnceLock;
+
 use tracing::Level;
 use tracing_subscriber::FmtSubscriber;
 
+
+pub fn tfd()-> &'static Tfd{
+    static INSTANCE:OnceLock<Tfd> = OnceLock::new();
+
+    INSTANCE.get_or_init(||{
+        Tfd::new()
+    })
+}
+
 pub struct Tfd {
-    format_occupancy: usize,
+    pub format_occupancy: usize,
 }
 
 impl Tfd {
-    pub fn new(format_occupancy: usize) -> Tfd {
-        let tfd = Tfd { format_occupancy };
+    fn new() -> Tfd {
+        let tfd = Tfd { format_occupancy: 15 };
         tfd.init_dev();
         tfd
     }
@@ -48,5 +59,37 @@ impl Tfd {
             func_identifier,
             width = self.format_occupancy
         );
+    }
+}
+
+impl Default for Tfd {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_info_logging() {
+        let tfd = tfd();
+        tfd.info("test_info", "Info message test");
+    }
+
+    #[test]
+    fn test_debug_logging() {
+        let tfd = tfd();
+        tfd.debug("test_debug", "Debug message test");
+    }
+
+    #[test]
+    fn test_error_logging() {
+        let tfd = tfd();
+        tfd.error("test_error", "Error message test");
     }
 }
